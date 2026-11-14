@@ -7,6 +7,8 @@ const clamp = (n, a, b) => Math.min(b, Math.max(a, n))
 const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(max-width:700px)').matches
 const V = (p) => (MOBILE ? p.replace('.mp4', '-m.mp4') : p)
 const P = (p) => p.replace('.mp4', '.jpg')
+// weak laptops / phones: switch off the heaviest visual effects automatically
+const LITE = typeof navigator !== 'undefined' && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4)
 const wa = (text) => `https://wa.me/${SHOP.whatsapp}?text=${encodeURIComponent(text)}`
 
 export default function App() {
@@ -21,7 +23,7 @@ export default function App() {
   const [missing, setMissing] = useState([])
   const bar = useRef(null)
 
-  useEffect(() => { document.title = `${SHOP.name} | Premium Nuts` }, [])
+  useEffect(() => { document.title = `${SHOP.name} | Premium Nuts`; document.documentElement.classList.toggle('lite', LITE) }, [])
   useEffect(() => { if (!toast) return; const t = setTimeout(() => setToast(''), 2800); return () => clearTimeout(t) }, [toast])
 
   // scroll progress bar
@@ -33,12 +35,15 @@ export default function App() {
 
   // scroll-driven effects: hero fade/zoom, scroll-linked marquee, card parallax
   useEffect(() => {
-    let last = scrollY, tick = false
+    let last = scrollY, tick = false, lastHp = ''
     const run = () => {
       tick = false
       const y = scrollY, v = y - last; last = y
       const hero = document.getElementById('nuts')
-      if (hero) hero.style.setProperty('--hp', clamp(y / innerHeight, 0, 1).toFixed(3))
+      if (hero) {
+        const hp = clamp(y / innerHeight, 0, 1).toFixed(3)
+        if (hp !== lastHp) { hero.style.setProperty('--hp', hp); lastHp = hp }
+      }
       const sk = clamp(-v * 0.25, -10, 10)
       document.querySelectorAll('.mtrack').forEach((t, n) => {
         const half = t.scrollWidth / 2
@@ -149,7 +154,7 @@ function Hero({ add }) {
     <section id="nuts" className={'hero ' + (n.dark ? 'dark' : 'light')} style={{ '--c': n.color }}>
       {NUTS.map((x, k) => (
         <video key={x.id} ref={(el) => (refs.current[k] = el)} className={'hv' + (k === i ? ' on' : '')}
-          src={V(x.video)} poster={P(x.video)} muted playsInline loop preload={k === i ? 'auto' : 'none'} />
+          src={V(x.video)} poster={P(x.video)} muted playsInline loop preload={k === i || k === (i + 1) % NUTS.length ? 'auto' : 'none'} />
       ))}
       <div className="scrim" />
       <div className="htext" key={n.id}>
