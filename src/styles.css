@@ -6,7 +6,7 @@ a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer;border:0
 h1,h2,h3{font-family:'Archivo Black',sans-serif;font-weight:400;line-height:.95;letter-spacing:-.02em}
 em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
 .mute{opacity:.5}
-.grain{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.14;mix-blend-mode:overlay;
+.grain{position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.05;
  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
 /* letterbox loader */
 .letterbox{position:fixed;inset:0;z-index:100;pointer-events:none}
@@ -36,7 +36,7 @@ em{font-family:'Instrument Serif',serif;font-style:italic;font-weight:400}
 @media(min-width:701px){.mmenu{display:none}}
 /* hero */
 .hero{position:relative;height:100vh;min-height:620px;overflow:hidden;background:var(--c);transition:background .8s;display:flex;align-items:center}
-.hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s;transform-origin:right center;transform:scale(calc(1.12 + var(--hp,0)*.18)) translateX(8%)}
+.hv{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s;transform-origin:right center;transform:scale(1.12) translateX(8%)}
 .hv.on{opacity:1}
 .scrim{position:absolute;inset:0;background:linear-gradient(90deg,var(--c) 0%,color-mix(in srgb,var(--c) 70%,transparent) 32%,transparent 62%),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.25))}
 .htext{position:relative;z-index:2;padding:0 6vw;max-width:640px;display:flex;flex-direction:column;gap:14px;animation:rise .8s cubic-bezier(.2,.7,.2,1)}
@@ -248,3 +248,16 @@ h2.rv.in{animation-name:hrv}
 .htext small{opacity:.92}.cinfo small{opacity:.92}.sgrid small{opacity:.8}.stats small{opacity:.75}
 .foot p{opacity:.8}.mute{opacity:.7}.rgrid figcaption small{opacity:.78}.eyebrow{opacity:.92}.count{opacity:.9}
 .item small{opacity:.75}
+
+/* v9: hero performance */
+.hv:not(.on){visibility:hidden;transition:opacity .8s,visibility 0s .8s}
+.hv{will-change:opacity}
+.pills{backdrop-filter:none;background:rgba(20,17,15,.88)}
+.nav{backdrop-filter:none;background:rgba(243,233,215,.94)}
+.panel{backdrop-filter:none;background:rgba(255,255,255,.9)}
+.lite .grain{display:none}
+.lite .htext{animation:none}
+.lite .card,.lite .gcard{transition:none}
+.lite .mtrack{transform:none!important}
+.lite .pin video.on{transform:none}
+.lite .hint i::after{animation:none}
