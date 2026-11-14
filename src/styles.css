@@ -256,8 +256,9 @@ h2.rv.in{animation-name:hrv}
 .nav{backdrop-filter:none;background:rgba(243,233,215,.94)}
 .panel{backdrop-filter:none;background:rgba(255,255,255,.9)}
 .lite .grain{display:none}
-.lite .htext{animation:none}
-.lite .card,.lite .gcard{transition:none}
-.lite .mtrack{transform:none!important}
-.lite .pin video.on{transform:none}
 .lite .hint i::after{animation:none}
+
+/* v10: toast fully hidden when closed + mobile hero title fit */
+.toast{opacity:0;visibility:hidden;transition:transform .5s cubic-bezier(.2,.9,.3,1.2),opacity .3s,visibility 0s .5s}
+.toast.on{opacity:1;visibility:visible;transition-delay:0s}
+@media(max-width:700px){.htext h1{font-size:clamp(44px,14.5vw,120px)}}
