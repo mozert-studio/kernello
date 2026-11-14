@@ -8,7 +8,8 @@ const MOBILE = typeof matchMedia !== 'undefined' && matchMedia('(max-width:700px
 const V = (p) => (MOBILE ? p.replace('.mp4', '-m.mp4') : p)
 const P = (p) => p.replace('.mp4', '.jpg')
 // weak laptops / phones: switch off the heaviest visual effects automatically
-const LITE = typeof navigator !== 'undefined' && ((navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4)
+const LITE_Q = typeof location !== 'undefined' ? new URLSearchParams(location.search).get('lite') : null // ?lite=1 force on, ?lite=0 force off
+const LITE = LITE_Q ? LITE_Q === '1' : typeof navigator !== 'undefined' && ((navigator.hardwareConcurrency || 8) <= 2 || (navigator.deviceMemory || 8) <= 2)
 const wa = (text) => `https://wa.me/${SHOP.whatsapp}?text=${encodeURIComponent(text)}`
 
 export default function App() {
@@ -63,8 +64,19 @@ export default function App() {
   // show a clear warning if any video file is missing / wrongly named
   useEffect(() => {
     const on = (e) => {
-      if (e.target.tagName !== 'VIDEO') return
-      const p = new URL(e.target.src).pathname
+      const v = e.target
+      if (v.tagName !== 'VIDEO') return
+      const p = new URL(v.src).pathname
+      // mobile "-m" file missing? silently fall back to the normal desktop file
+      if (p.endsWith('-m.mp4')) {
+        v.src = p.replace('-m.mp4', '.mp4')
+        v.load()
+        const r = v.getBoundingClientRect()
+        const inView = r.bottom > 0 && r.top < innerHeight
+        const idle = v.closest('.card') || (v.closest('.pin') && !v.classList.contains('on')) || (v.classList.contains('hv') && !v.classList.contains('on'))
+        if (inView && !idle) v.play().catch(() => {})
+        return
+      }
       setMissing((m) => (m.includes(p) ? m : [...m, p]))
     }
     document.addEventListener('error', on, true)
